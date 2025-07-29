@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:latest
+    container_name: joomla_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: my-db
+    networks:
+      - joomla_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  joomla:
+    image: joomla:latest
+    container_name: joomla_container
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - target: 80
+        published: 8080
+    environment:
+      JOOMLA_DB_NAME: my-db
+      JOOMLA_DB_HOST: db
+      JOOMLA_DB_PASSWORD: my-secret-pw
+    networks:
+      - joomla_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  joomla_network:
+    name: joomla_network  # Ensures it uses this exact name (instead of a generated one)
