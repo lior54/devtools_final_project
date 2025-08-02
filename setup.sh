@@ -4,11 +4,14 @@ docker compose up --build -d
 
 echo "Waiting for Joomla to be healthy..."
 until [ "$(docker inspect --format='{{.State.Health.Status}}' joomla_container)" = "healthy" ]; do
-  echo "Waiting for Joomla..."
   sleep 3
 done
 echo "Joomla is healthy."
 
 echo "Containers are healthy. Setup complete! Joomla should be running at http://localhost:8080"
+echo "Creating Joomla users for team members..."
+docker exec -it joomla_container php cli/joomla.php user:add --username=lior --email=lior@example.com --password=securepass123 --name=Lior --usergroup=Administrator
+docker exec -it joomla_container php cli/joomla.php user:add --username=yuval --email=yuval@example.com --password=securepass123 --name=Yuval --usergroup=Administrator
+
 echo "To see logs: docker compose logs -f"
 

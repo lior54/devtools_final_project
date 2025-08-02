@@ -12,9 +12,12 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    volumes:
+      - db_data:/var/lib/mysql
 
   joomla:
     image: joomla:latest
+    restart: always
     container_name: joomla_container
     depends_on:
       db:
@@ -26,6 +29,11 @@ services:
       JOOMLA_DB_NAME: my-db
       JOOMLA_DB_HOST: db
       JOOMLA_DB_PASSWORD: my-secret-pw
+      JOOMLA_SITE_NAME: Joomla
+      JOOMLA_ADMIN_USER: demoadmin
+      JOOMLA_ADMIN_USERNAME: demoadmin
+      JOOMLA_ADMIN_PASSWORD: secretpassword
+      JOOMLA_ADMIN_EMAIL: joomla@example.com
     networks:
       - joomla_network
     healthcheck:
@@ -34,6 +42,9 @@ services:
       timeout: 5s
       retries: 5
 
+volumes:
+  db_data:
+  
 networks:
   joomla_network:
     name: joomla_network  # Ensures it uses this exact name (instead of a generated one)
