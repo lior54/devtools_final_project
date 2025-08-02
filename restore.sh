@@ -5,6 +5,8 @@ if ! command -v mysqladmin >/dev/null 2>&1; then
     exit 1
 fi
 
+echo "Copying backup file from git"
+git show origin/main:my-joomla.backup.sql.gz > my-joomla.backup.sql.gz
 echo "Restoring Joomla database from backup..."
 gunzip < ./my-joomla.backup.sql.gz | docker exec -i joomla_mysql sh -c "exec mysql -h 127.0.0.1 -uroot -pmy-secret-pw --force my-db"
 
