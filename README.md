@@ -15,7 +15,6 @@ To run this project on your desktop you will need:
 - A Unix‑like shell (Linux, macOS or Windows Subsystem for Linux). The scripts use `bash`.
 
 ## Repository contents
-
 .
 ├── compose.yaml # Docker Compose definition for MySQL and Joomla
 ├── setup.sh # Builds and starts the containers and creates users
@@ -25,9 +24,6 @@ To run this project on your desktop you will need:
 ├── my-joomla.backup.sql.gz # Example database backup (compressed)
 └── README.md # Project documentation (you are reading it)
 
-markdown
-Copy
-Edit
 
 ### Services defined in `compose.yaml`
 
@@ -41,20 +37,14 @@ Both services attach to a custom bridge network called `joomla_network`. Feel fr
 ## Quick start
 
 1. **Clone** this repository:  
-   ```bash
+
    git clone https://github.com/lior54/devtools_final_project.git
    cd devtools_final_project
 Make the scripts executable (if necessary):
 
-bash
-Copy
-Edit
 chmod +x setup.sh backup.sh restore.sh cleanup.sh
 Bring up the environment:
 
-bash
-Copy
-Edit
 ./setup.sh
 The script runs docker compose up --build -d, waits until Joomla reports a healthy status and then prints that the site is running at http://localhost:8080. It also creates two Joomla administrator accounts with username/password lior/securepass123 and yuval/securepass123 by invoking Joomla’s CLI. You can change or remove these lines if you prefer different accounts.
 
@@ -64,34 +54,23 @@ Open a browser and navigate to http://localhost:8080. Log in with the administra
 View logs:
 To follow container logs, run:
 
-bash
-Copy
-Edit
 docker compose logs -f
 Backing up the database
 Use backup.sh to create a compressed dump of all databases. The script first checks that mysqldump is installed. It then uses docker exec to run mysqldump inside the joomla_mysql container and pipes the output through gzip to create my-joomla.backup.sql.gz. Run it like this:
 
-bash
-Copy
-Edit
 ./backup.sh
 When the script finishes, the backup file will be in the project directory. You can adjust the name or location of the dump file in the script if desired.
 
 Restoring the database
 To restore from the compressed backup file (either the example provided in the repository or one you created), run restore.sh. This script verifies that mysqladmin is available, downloads the backup from GitHub if it isn’t present, decompresses it with gunzip and pipes it into the mysql client running inside the database container. After loading the data it restarts the Joomla container and waits until it becomes healthy.
 
-bash
-Copy
-Edit
 ./restore.sh
 Restoring will overwrite existing data in the my-db database. If you changed the database name or credentials in compose.yaml, update the corresponding variables in restore.sh before running it.
 
 Cleaning up
 When you’re done with the environment, run cleanup.sh to stop and remove the containers, network, volumes and images. The script runs docker compose down --rmi all --volumes --remove-orphans, which removes everything created by the Compose stack. Use this command when you want to start fresh or reclaim disk space:
 
-bash
-Copy
-Edit
+
 ./cleanup.sh
 Be careful—this will delete all data stored in the database volume.
 
@@ -102,9 +81,6 @@ Changing database credentials: Update MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, JOOML
 
 Creating additional users: Use Joomla’s CLI inside the running container:
 
-bash
-Copy
-Edit
 docker exec -it joomla_container php cli/joomla.php user:add \
   --username=youruser \
   --email=you@example.com \
